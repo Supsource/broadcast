@@ -103,4 +103,4 @@ time.Sleep(time.Second)                                // Allow time for previou
 * Open an issue if you want a new feature or if you spotted a bug
 * Feel free to propose pull requests
 
-Any contribution is more than welcome! In the meantime, if we want to discuss gosiris you can contact me [@supriyo](https://twitter.com/iamsupriyo7).
+Any contribution is more than welcome! In the meantime, if we want to discuss something you can contact me [@supriyo](https://twitter.com/iamsupriyo7).
