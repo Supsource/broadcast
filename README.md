@@ -1,74 +1,45 @@
-# broadcast
+# Broadcast
+Broadcast is a Go library that provides a mechanism for sending repeated notifications to multiple goroutines with guaranteed delivery and user-defined types.
 
-
-Notification broadcaster in Go
-
-## What?
-
-`broadcast` is a library that allows sending repeated notifications to multiple goroutines with guaranteed delivery and user defined types.
-
-## Why?
-
+# Why Broadcast?
 ### Why not Channels?
+The standard way to handle notifications in Go is via a `chan struct{}`, but sending a message to a channel is received by a single goroutine. The only way to broadcast to multiple goroutines is to close the channel, which is not a viable option for sending repeated notifications.
 
-The standard way to handle notifications is via a `chan struct{}`. However, sending a message to a channel is received by a single goroutine. 
-
-The only operation that is broadcast to multiple goroutines is a channel closure. Yet, if the channel is closed, there's no way to send a message again.
-
-❌ Repeated notifications to multiple goroutines
-
-✅ Guaranteed delivery
-
+Broadcast provides a solution for sending repeated notifications to multiple goroutines with guaranteed delivery.
 ### Why not sync.Cond?
+`sync.Cond` is the standard solution based on condition variables to set up containers of goroutines waiting for a specific condition. However, the `Broadcast()` method doesn't guarantee that a goroutine will receive the notification. The notification will be lost if the listener goroutine isn't waiting on the `Wait()` method.
 
-`sync.Cond` is the standard solution based on condition variables to set up containers of goroutines waiting for a specific condition.
+Broadcast provides a solution for sending repeated notifications to multiple goroutines with guaranteed delivery.
 
-There's one caveat to keep in mind, though: the `Broadcast()` method doesn't guarantee that a goroutine will receive the notification. Indeed, the notification will be lost if the listener goroutine isn't waiting on the `Wait()` method.
-
-✅ Repeated notifications to multiple goroutines
-
-❌ Guaranteed delivery
-
-## How?
-
+# How to Use Broadcast
 ### Step by Step
-
-First, we need to create a `Relay` for a message type (empty struct in this case):
-
+First, create a Relay for a message type (an empty struct in this example):
 ```go
 relay := broadcast.NewRelay[struct{}]()
 ```
-
-Once a `Relay` is created, we can create a new listener using the `Listener` method. As the `broadcast` library relies internally on channels, it accepts a capacity:
-
-````go
+Once a Relay is created, create a new listener using the Listener method. As the Broadcast library relies internally on channels, it accepts a capacity:
+```go
 list := relay.Listener(1) // Create a new listener based on a channel with a one capacity
-````
-
-A `Relay` can send a notification in three different manners:
+```
+A Relay can send a notification in three different ways:
 * `Notify`: block until a notification is sent to all the listeners
 * `NotifyCtx`: send a notification to all listeners unless the provided context times out or is canceled
 * `Broadcast`: send a notification to all listeners in a non-blocking manner; delivery isn't guaranteed
 
-On the `Listener` side, we can access the internal channel using `Ch`:
-
+On the Listener side, we can access the internal channel using Ch:
 ```go
 <-list.Ch() // Wait on a notification
 ```
-
-We can close a `Listener` and a `Relay` using `Close`:
-
+We can close a Listener and a Relay using `Close`:
 ```go
 list.Close() 
 relay.Close()
 ```
-
-Closing a `Relay` and `Listener`s can be done concurrently in a safe manner.
-
-### Example
+Closing a Relay and Listeners can be done concurrently in a safe manner.
 
 ```go
 type msg string
+
 const (
     msgA msg = "A"
     msgB     = "B"
@@ -97,10 +68,27 @@ time.Sleep(time.Second)                                // Allow time for previou
 relay.Broadcast(msgC)                                  // Send notification without guaranteed delivery
 time.Sleep(time.Second)                                // Allow time for previous messages to be processed
 ```
-
 # Contributing
+Contributing to this project is highly encouraged and appreciated. If you have ideas for new features or have spotted a bug, please open an issue on our GitHub repository. We will review the issue and work with you to find a solution.
 
-* Open an issue if you want a new feature or if you spotted a bug
-* Feel free to propose pull requests
+If you want to contribute code to the project, feel free to propose a pull request. To ensure that your contribution is accepted, please follow these guidelines:
+1. Fork the repository and create a new branch for your changes.
+2. Make your changes and ensure that they are thoroughly tested.
+3. Write clear and concise commit messages that explain your changes.
+4. Ensure that your code follows the project's coding conventions and style.
+5. Submit a pull request and describe your changes in detail.
 
-Any contribution is more than welcome! In the meantime, if we want to discuss something you can contact me [@supriyo](https://twitter.com/iamsupriyo7).
+We will review your pull request and provide feedback if necessary. Once your contribution is accepted, we will merge it into the project and credit you in the CONTRIBUTORS.md file.
+If you have any questions or concerns about contributing to the project, please don't hesitate to contact us through GitHub or by reaching out to @supriyo. We are open to feedback and discussion and welcome any contributions to help improve this project.
+
+
+
+
+
+
+
+
+
+
+
+
